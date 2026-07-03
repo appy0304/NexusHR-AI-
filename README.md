@@ -1,7 +1,7 @@
 # AI-Powered Employee Management Platform
 
 > **Enterprise-grade, production-ready, scalable to 100,000+ employees**  
-> **Built by:** CODING Kranti (AI Assistant by MKCL)
+
 
 ---
 
