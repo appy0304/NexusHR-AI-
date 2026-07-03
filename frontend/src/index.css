@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color: #e5eefb;
+  background:
+    radial-gradient(circle at top, #1f2937 0%, #111827 35%, #030712 100%);
+  font-family: Inter, 'Segoe UI', sans-serif;
+}
+
+html, body, #app {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background-attachment: fixed;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #111827;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #8b5cf6, #22d3ee);
+  border-radius: 999px;
+}
+
+.glass-card {
+  @apply rounded-3xl border border-white/10 bg-white/[0.08] shadow-soft backdrop-blur-xl;
+}
+
+.soft-ring {
+  @apply ring-1 ring-white/10;
+}

@@ -1,0 +1,499 @@
+basePath: /
+definitions:
+  dto.AddressDTO:
+    properties:
+      city:
+        maxLength: 100
+        type: string
+      country:
+        maxLength: 100
+        type: string
+      state:
+        maxLength: 100
+        type: string
+      street:
+        maxLength: 200
+        type: string
+      zipCode:
+        maxLength: 20
+        type: string
+    required:
+    - city
+    - country
+    - state
+    - zipCode
+    type: object
+  dto.AuthError:
+    properties:
+      error:
+        type: string
+      message:
+        type: string
+      requestId:
+        type: string
+      success:
+        type: boolean
+    type: object
+  dto.AuthResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.LoginResponse'
+      error:
+        type: string
+      message:
+        type: string
+      requestId:
+        type: string
+      success:
+        type: boolean
+    type: object
+  dto.CreateEmployeeRequest:
+    properties:
+      address:
+        $ref: '#/definitions/dto.AddressDTO'
+      dateOfBirth:
+        type: string
+      department:
+        maxLength: 100
+        type: string
+      designation:
+        maxLength: 100
+        type: string
+      email:
+        maxLength: 150
+        type: string
+      emergencyContact:
+        $ref: '#/definitions/dto.EmergencyContactDTO'
+      employeeId:
+        maxLength: 50
+        type: string
+      employmentStatus:
+        enum:
+        - active
+        - inactive
+        - terminated
+        - onboarding
+        - leave
+        type: string
+      firstName:
+        maxLength: 100
+        type: string
+      joiningDate:
+        type: string
+      lastName:
+        maxLength: 100
+        type: string
+      managerId:
+        description: Sent as string, converted to ObjectID
+        type: string
+      phone:
+        maxLength: 20
+        type: string
+      salary:
+        minimum: 0
+        type: number
+      skills:
+        items:
+          type: string
+        type: array
+    required:
+    - department
+    - designation
+    - email
+    - employeeId
+    - employmentStatus
+    - firstName
+    - lastName
+    type: object
+  dto.EmergencyContactDTO:
+    properties:
+      email:
+        maxLength: 150
+        type: string
+      name:
+        maxLength: 150
+        type: string
+      phone:
+        maxLength: 20
+        type: string
+      relationship:
+        maxLength: 50
+        type: string
+    required:
+    - name
+    - phone
+    - relationship
+    type: object
+  dto.StandardResponse:
+    properties:
+      data: {}
+      error:
+        type: string
+      message:
+        type: string
+      requestId:
+        type: string
+      success:
+        type: boolean
+      timestamp:
+        type: string
+    type: object
+  dto.UpdateEmployeeRequest:
+    properties:
+      address:
+        $ref: '#/definitions/dto.AddressDTO'
+      dateOfBirth:
+        type: string
+      department:
+        type: string
+      designation:
+        type: string
+      email:
+        type: string
+      emergencyContact:
+        $ref: '#/definitions/dto.EmergencyContactDTO'
+      employmentStatus:
+        type: string
+      firstName:
+        type: string
+      joiningDate:
+        type: string
+      lastName:
+        type: string
+      managerId:
+        type: string
+      phone:
+        type: string
+      salary:
+        type: number
+      skills:
+        items:
+          type: string
+        type: array
+    type: object
+  models.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        minLength: 6
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  models.LoginResponse:
+    properties:
+      accessToken:
+        type: string
+      expiresIn:
+        type: integer
+      refreshToken:
+        type: string
+      user:
+        $ref: '#/definitions/models.UserInfo'
+    type: object
+  models.LogoutRequest:
+    properties:
+      refreshToken:
+        type: string
+    required:
+    - refreshToken
+    type: object
+  models.RefreshTokenRequest:
+    properties:
+      refreshToken:
+        type: string
+    required:
+    - refreshToken
+    type: object
+  models.UserInfo:
+    properties:
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      role:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: This is an enterprise-grade AI-Powered Employee Management Platform
+  title: Employee Management API
+  version: "2.0"
+paths:
+  /api/v1/auth/create-admin:
+    post:
+      consumes:
+      - application/json
+      description: Create the initial admin user for the system (use only once)
+      parameters:
+      - description: 'Admin credentials: email, password, name'
+        in: body
+        name: admin
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.AuthResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.AuthError'
+      summary: Create default admin user
+      tags:
+      - auth
+  /api/v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user with email and password, returns JWT tokens
+      parameters:
+      - description: Login credentials
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.AuthResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.AuthError'
+      summary: User login
+      tags:
+      - auth
+  /api/v1/auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: Invalidate refresh token and logout user
+      parameters:
+      - description: Logout request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.LogoutRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.AuthResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.AuthError'
+      summary: User logout
+      tags:
+      - auth
+  /api/v1/auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Use refresh token to get a new access token
+      parameters:
+      - description: Refresh token
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.RefreshTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.AuthResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.AuthError'
+      summary: Refresh access token
+      tags:
+      - auth
+  /api/v1/employees:
+    get:
+      description: Retrieve all employees with pagination, filtering, sorting, and
+        search
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Items per page
+        in: query
+        maximum: 100
+        name: pageSize
+        type: integer
+      - description: Filter by department
+        in: query
+        name: department
+        type: string
+      - description: Filter by employment status
+        in: query
+        name: status
+        type: string
+      - description: Full-text search across name, email, skills
+        in: query
+        name: search
+        type: string
+      - default: created_at
+        description: Sort field
+        in: query
+        name: sort
+        type: string
+      - default: desc
+        description: Sort order
+        in: query
+        name: order
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.StandardResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.StandardResponse'
+      summary: Get all employees (paginated)
+      tags:
+      - employees
+    post:
+      consumes:
+      - application/json
+      description: Create a new employee record with full validation
+      parameters:
+      - description: Employee creation payload
+        in: body
+        name: employee
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateEmployeeRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.StandardResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.StandardResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.StandardResponse'
+      summary: Create a new employee
+      tags:
+      - employees
+  /api/v1/employees/{id}:
+    delete:
+      description: Delete an employee by their MongoDB ID
+      parameters:
+      - description: Employee MongoDB ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.StandardResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.StandardResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.StandardResponse'
+      summary: Delete employee
+      tags:
+      - employees
+    get:
+      description: Retrieve a single employee record by their MongoDB ID
+      parameters:
+      - description: Employee MongoDB ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.StandardResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.StandardResponse'
+      summary: Get employee by ID
+      tags:
+      - employees
+    put:
+      consumes:
+      - application/json
+      description: Update an existing employee record (partial update supported)
+      parameters:
+      - description: Employee MongoDB ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Employee update payload
+        in: body
+        name: employee
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateEmployeeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.StandardResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.StandardResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.StandardResponse'
+      summary: Update employee
+      tags:
+      - employees
+schemes:
+- http
+- https
+swagger: "2.0"
