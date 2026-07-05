@@ -24,12 +24,12 @@ const (
 var MongoClient *mongo.Client
 
 func ConnectDB() {
-	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017").
- mongoURI := os.Getenv("MONGO_URI")
- if mongoURI == "" {
-     mongoURI = "mongodb://localhost:27017"
- }
- clientOptions := options.Client().ApplyURI(mongoURI).
+	mongoURI := os.Getenv("MONGO_URI")
+	if mongoURI == "" {
+		mongoURI = "mongodb://localhost:27017"
+	}
+
+	clientOptions := options.Client().ApplyURI(mongoURI).
 		SetMaxPoolSize(50). // Enterprise: handle many concurrent connections
 		SetMinPoolSize(10).
 		SetMaxConnIdleTime(30 * time.Second)
