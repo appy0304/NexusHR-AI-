@@ -8,6 +8,7 @@ package main
 // @schemes http https
 
 import (
+	"os"
 	_ "simple-go-api/docs"
 
 	"simple-go-api/config"
@@ -53,7 +54,12 @@ func main() {
 	router.Use(middleware.PrometheusMetrics())
 	router.GET("/metrics", middleware.MetricsHandler())
 
-	router.Run(":8080")
+	// router.Run(":8080")
+	 port := os.Getenv("PORT")
+ if port == "" {
+     port = "8080"
+ }
+ router.Run(":" + port)
 }
 
 // package main

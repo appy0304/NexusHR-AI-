@@ -3,8 +3,8 @@ package config
 import (
 	"context"
 	"fmt"
-	"time"
 	"os"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -24,11 +24,11 @@ const (
 var MongoClient *mongo.Client
 
 func ConnectDB() {
+	// clientOptions := options.Client().ApplyURI("mongodb://localhost:27017").
 	mongoURI := os.Getenv("MONGO_URI")
 	if mongoURI == "" {
 		mongoURI = "mongodb://localhost:27017"
 	}
-
 	clientOptions := options.Client().ApplyURI(mongoURI).
 		SetMaxPoolSize(50). // Enterprise: handle many concurrent connections
 		SetMinPoolSize(10).
@@ -64,7 +64,7 @@ func CreateIndexes() {
 
 	// 1. Unique index on EmployeeID
 	employeeIDIndex := mongo.IndexModel{
-		Keys:    bson.M{"employeeId": 1},
+		Keys:    bson.D{{Key: "employeeId", Value: 1}},
 		Options: options.Index().SetUnique(true),
 	}
 	_, err := collection.Indexes().CreateOne(ctx, employeeIDIndex)
@@ -74,7 +74,7 @@ func CreateIndexes() {
 
 	// 2. Unique index on Email
 	emailIndex := mongo.IndexModel{
-		Keys:    bson.M{"email": 1},
+		Keys:    bson.D{{Key: "email", Value: 1}},
 		Options: options.Index().SetUnique(true),
 	}
 	_, err = collection.Indexes().CreateOne(ctx, emailIndex)
@@ -84,7 +84,10 @@ func CreateIndexes() {
 
 	// 3. Compound index on Department + EmploymentStatus
 	deptStatusIndex := mongo.IndexModel{
-		Keys: bson.M{"department": 1, "employmentStatus": 1},
+		Keys: bson.D{
+			{Key: "department", Value: 1},
+			{Key: "employmentStatus", Value: 1},
+		},
 	}
 	_, err = collection.Indexes().CreateOne(ctx, deptStatusIndex)
 	if err != nil {
@@ -93,7 +96,7 @@ func CreateIndexes() {
 
 	// 4. Index on ManagerID
 	managerIndex := mongo.IndexModel{
-		Keys: bson.M{"managerId": 1},
+		Keys: bson.D{{Key: "managerId", Value: 1}},
 	}
 	_, err = collection.Indexes().CreateOne(ctx, managerIndex)
 	if err != nil {
@@ -102,7 +105,7 @@ func CreateIndexes() {
 
 	// 5. Index on JoiningDate
 	joiningDateIndex := mongo.IndexModel{
-		Keys: bson.M{"joiningDate": 1},
+		Keys: bson.D{{Key: "joiningDate", Value: 1}},
 	}
 	_, err = collection.Indexes().CreateOne(ctx, joiningDateIndex)
 	if err != nil {

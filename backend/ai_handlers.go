@@ -10,12 +10,12 @@ import (
 )
 
 // --- YOUR API KEYS ---
+
 var GroqAPIKey = os.Getenv("GROQ_API_KEY")
 var HuggingFaceToken = os.Getenv("HUGGINGFACE_TOKEN")
 var PineconeAPIKey = os.Getenv("PINECONE_API_KEY")
-const PineconeHostURL = "https://emp-management-zp59a8y.svc.aped-4627-b74a.pinecone.io"
+var PineconeHostURL = os.Getenv("PINECONE_HOST_URL")
 
-// --- AI MODEL URLS ---
 const HFEmbeddingURL = "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2"
 const GroqURL = "https://api.groq.com/openai/v1/chat/completions"
 
